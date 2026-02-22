@@ -104,4 +104,4 @@ Total data items: 31
 
 ## 3️⃣ CDM
 
-![Schéma du MCD](images/mcd_v1.png)
+![Schéma du MCD](images/CDM.png)
