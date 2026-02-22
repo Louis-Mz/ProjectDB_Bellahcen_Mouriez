@@ -102,4 +102,6 @@ This table lists all identified data items without implying any database structu
 
 Total data items: 31
 
-Total data items: 31
+## 3️⃣ CDM
+
+![Schéma du MCD](images/mcd_v1.png)
