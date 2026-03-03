@@ -114,7 +114,7 @@ Total data items: 31
 
 **Model** = (**M_name** `VARCHAR(50)`, M_capacity `INT`, M_maxrange `INT`);
 
-**Role** = (**R_ID** `CHAR(10)`, R_name `VARCHAR(50)`);
+**Role** = (**R_id** `CHAR(10)`, R_name `VARCHAR(50)`);
 
 **Plane** = (**PL_id** `CHAR(15)`, PL_manufacturingyear `INT`, PL_status `VARCHAR(20)`, #M_name, #A_id);
 
