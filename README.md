@@ -105,3 +105,23 @@ Total data items: 31
 ## 3️⃣ CDM
 
 ![Schéma du MCD](images/CDM.png)
+
+## 4️⃣ LDM
+
+**Employee** = (**E_id** `CHAR(10)`, E_lastname `VARCHAR(50)`, E_firstname `VARCHAR(50)`, E_birthdate `DATE`, E_salary `VARCHAR(50)`, E_status `VARCHAR(50)`, E_hiredate `DATE`, #E_id_pilot*);
+
+**Airport** = (**A_id** `CHAR(3)`, A_name `VARCHAR(100)`, A_city `VARCHAR(50)`, A_country `VARCHAR(50)`);
+
+**Model** = (**M_name** `VARCHAR(50)`, M_capacity `INT`, M_maxrange `INT`);
+
+**Role** = (**R_ID** `CHAR(10)`, R_name `VARCHAR(50)`);
+
+**Plane** = (**PL_id** `CHAR(15)`, PL_manufacturingyear `INT`, PL_status `VARCHAR(20)`, #M_name, #A_id);
+
+**Flight** = (**F_id** `CHAR(10)`, F_scheduleddeparturedatetime `DATETIME`, F_scheduledarrivaldatetime `DATETIME`, F_actualdeparturedatetime `DATETIME`, F_actualarrivaldatetime `DATETIME`, F_status `VARCHAR(20)`, F_passengersonboard `INT`, #A_id, #A_id_1, #PL_id);
+
+**Maintenance** = (**#PL_id**, **M_id** `VARCHAR(50)`, M_date `DATE`);
+
+**Works_in** = (**#E_id**, **#F_id**, **#R_id**);
+
+**is_certified_for** = (**#E_id**, **#M_name**);
