@@ -1,6 +1,6 @@
 # ProjectDB_Bellahcen_Mouriez
 
-# Private Aviation Company – MERISE Requirements Phase
+# Private Aviation Company - MERISE Requirements Phase
 
 This document describes the operational and business rules, along with the raw data dictionary, for a private aviation company operating commercial-style private flights (similar in structure to commercial airlines like Air France, but specialized in private aviation). The content reflects operational/business perspectives rather than technical database design.
 
@@ -125,3 +125,14 @@ Total data items: 31
 **Works_in** = (**#E_id**, **#F_id**, **#R_id**);
 
 **is_certified_for** = (**#E_id**, **#M_name**);
+
+## 5️⃣ Usage Scenario
+
+**Role:** Flight Operations Director
+**Context:** The company wants to optimize its fleet usage and crew management for the upcoming quarter. The Operations Director needs to analyze past performance to decide on pilot training (certifications), plane maintenance schedules, and route profitability.
+
+**Data Requirements:**
+"As the Operations Director, I need to extract specific data to prepare the Annual Operations Report.
+- Fleet Health: I need to know which planes are currently under maintenance and which models are most reliable (least maintenance).
+- Crew Optimization: I need to identify our most active pilots to prevent burnout and ensure we have enough crew certified for our largest aircraft (Boeing 787/Airbus A350).
+- Flight Logistics: I need to track passenger volumes on specific routes (e.g., leaving Paris) to determine if we are using the right aircraft size."

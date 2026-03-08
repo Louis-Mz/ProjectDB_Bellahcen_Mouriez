@@ -1,15 +1,24 @@
 -- =====================================
+-- USAGE SCENARIO
+-- Role: Flight Operations Director
+-- Context: Preparing the report to optimize fleet usage, crew allocation, and maintenance planning.
+-- =====================================
+
+USE private_aviation_company;
+
+-- =====================================
 -- 1. Personnel Analysis
+-- Goal: Identify active workforce and salary distribution.
 -- =====================================
 
 -- Active employees (ordered by salary descending)
 select E_id, E_firstname, E_lastname, E_salary
 from Employee
-where E_status = 'active'
+where E_status = 'Active'
 order by E_salary desc;
 
 -- Employees born between 1980 and 1995
-select E_id, E_firstname, E_lastname
+select E_id, E_firstname, E_lastname, E_birthdate
 from Employee
 where E_birthdate between '1980-01-01' and '1995-12-31'
 order by E_birthdate;
@@ -44,13 +53,14 @@ group by E_status;
 
 -- =====================================
 -- 2. Flight Analysis
+-- Goal: Analyze schedule adherence and route frequency.
 -- =====================================
 
--- Flights that occurred between two dates
-select F_id, PL_id, F_actualdeparturedatetime, F_status
+-- Flights that occurred (or are scheduled) in 2024
+select F_id, PL_id, F_scheduleddeparturedatetime, F_status
 from Flight
-where F_actualdeparturedatetime between '2025-01-01 00:00:00' and '2026-01-01 00:00:00'
-order by F_actualdeparturedatetime;
+where F_scheduleddeparturedatetime between '2024-01-01 00:00:00' and '2024-12-31 23:59:59'
+order by F_scheduleddeparturedatetime;
 
 -- Distinct flight statuses
 select distinct F_status
@@ -60,7 +70,7 @@ from Flight;
 select PL_id, count(*)
 from Flight
 group by PL_id
-having count(*) > 50;
+having count(*) > 2;
 
 -- Number of flights per departure airport
 select A.A_id, count(F.F_id) as total_flights
@@ -83,7 +93,7 @@ join Model M on P.M_name = M.M_name
 order by F.F_actualdeparturedatetime;
 
 -- Flights using airplanes with capacity above the average
-select F.F_id
+select F.F_id, M.M_capacity
 from Flight F
 join Plane P on F.PL_id = P.PL_id
 join Model M on P.M_name = M.M_name
@@ -94,6 +104,7 @@ where M.M_capacity > (
 
 -- =====================================
 -- 3. Airplane Analysis
+-- Goal: Fleet capacity and maintenance needs.
 -- =====================================
 
 -- Total passengers transported per airplane
@@ -101,7 +112,7 @@ select P.PL_id, sum(F.F_passengersonboard)
 from Plane P
 join Flight F on P.PL_id = F.PL_id
 group by P.PL_id
-having sum(F.F_passengersonboard) > 10000;
+having sum(F.F_passengersonboard) > 300;
 
 -- Airplanes that never had maintenance
 select P.PL_id
@@ -116,7 +127,7 @@ where not exists (
 select PL_id
 from Maintenance
 group by PL_id
-having count(*) > all (
+having count(*) >= all (
     select count(*)
     from Maintenance
     group by PL_id
@@ -124,6 +135,7 @@ having count(*) > all (
 
 -- =====================================
 -- 4. Maintenance Analysis
+-- Goal: Tracking technical interventions.
 -- =====================================
 
 -- Number of maintenance interventions per airplane
@@ -134,12 +146,13 @@ group by P.PL_id
 having count(M.PL_id) >= 2;
 
 -- List of airplanes and their maintenance (including airplanes without maintenance)
-select P.PL_id, M.M_id
+select P.PL_id, M.M_id, M.M_date
 from Plane P
 left join Maintenance M on P.PL_id = M.PL_id;
 
 -- =====================================
 -- 5. Roles and Certifications
+-- Goal: Crew management.
 -- =====================================
 
 -- Number of employees per role
@@ -147,7 +160,7 @@ select R.R_id, R_name, count(W.R_id)
 from Role R
 join Works_in W on R.R_id = W.R_id
 group by R.R_id, R.R_name
-having count(W.R_id) > 10;
+having count(W.R_id) > 2;
 
 -- Employees and their roles on flights
 select E.E_lastname, E.E_firstname, F.F_id as flight_id, R.R_name as role
@@ -158,41 +171,35 @@ join Flight F on F.F_id = W.F_id
 order by E.E_lastname, E.E_firstname, F.F_actualdeparturedatetime;
 
 -- Pilots and models they are certified for
-select E.E_lastname, E.E_firstname, M.M_name
+select E.E_lastname, E.E_firstname, I.M_name
 from Employee E
 join is_certified_for I on E.E_id = I.E_id
-join Model M on M.M_name = I.M_name
-where E.E_id_pilot is null
-order by E.E_lastname, E.E_firstname;
+order by E.E_lastname;
 
 -- =====================================
 -- 6. Airport Analysis
+-- Goal: Geographical distribution.
 -- =====================================
 
 -- Airports located in specific countries
 select A_name, A_city
 from Airport
-where A_country in ('France','Germany','Spain')
+where A_country in ('France','Germany','UK')
 order by A_city;
 
 -- Airplane models used for all flights from a given airport (CDG)
-select P.M_name
+select distinct P.M_name
 from Plane P
 join Flight F on P.PL_id = F.PL_id
-where F.A_id_departure = 'CDG'
-group by P.M_name
-having count(distinct F.F_id) = (
-    select count(*)
-    from Flight
-    where A_id_departure = 'CDG'
-);
+where F.A_id_departure = 'CDG';
 
 -- =====================================
 -- 7. Airplane Model Capacity Analysis
+-- Goal: Strategic planning.
 -- =====================================
 
 -- Models with capacity greater than at least one other model
-select M_name
+select M_name, M_capacity
 from Model
 where M_capacity > any (
     select M_capacity
