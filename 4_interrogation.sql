@@ -1,8 +1,4 @@
 -- =====================================
--- ANNUAL OPERATIONAL AUDIT – AIRLINE
--- =====================================
-
--- =====================================
 -- 1. Personnel Analysis
 -- =====================================
 
@@ -69,7 +65,7 @@ having count(*) > 50;
 -- Number of flights per departure airport
 select A.A_id, count(F.F_id) as total_flights
 from Airport A
-join Flight F on A.A_id = F.A_id_1
+join Flight F on A.A_id = F.A_id_departure
 group by A.A_id
 order by total_flights desc;
 
@@ -77,7 +73,7 @@ order by total_flights desc;
 select F.F_actualdeparturedatetime, F.F_actualarrivaldatetime, P.PL_id
 from Flight F
 join Plane P on P.PL_id = F.PL_id
-order by F_actualdeparturedatetime;
+order by F.F_actualdeparturedatetime;
 
 -- Flights with airplane model used
 select F.F_id, M.M_name as model
@@ -183,12 +179,12 @@ order by A_city;
 select P.M_name
 from Plane P
 join Flight F on P.PL_id = F.PL_id
-where F.A_id = 'CDG'
+where F.A_id_departure = 'CDG'
 group by P.M_name
 having count(distinct F.F_id) = (
     select count(*)
     from Flight
-    where A_id = 'CDG'
+    where A_id_departure = 'CDG'
 );
 
 -- =====================================
